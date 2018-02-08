@@ -16,7 +16,10 @@ const store = createStore(todoApp);
 
 let nextTodoId = 0;
 
-const FilterLink = ({ children, filter }) => {
+const FilterLink = ({ children, currentFilter, filter }) => {
+  if (filter === currentFilter) {
+    return <span>{children}</span>;
+  }
   return (
     <a
       href="#"
@@ -92,9 +95,16 @@ class TodoApp extends React.Component {
           )}
         </ul>
         <p>
-          Show: <FilterLink filter="SHOW_ALL">All</FilterLink>{" "}
-          <FilterLink filter="ACTIVE">Active</FilterLink>{" "}
-          <FilterLink filter="COMPLETED">Completed</FilterLink>
+          Show:{" "}
+          <FilterLink currentFilter={this.props.filter} filter="SHOW_ALL">
+            All
+          </FilterLink>{" "}
+          <FilterLink currentFilter={this.props.filter} filter="ACTIVE">
+            Active
+          </FilterLink>{" "}
+          <FilterLink currentFilter={this.props.filter} filter="COMPLETED">
+            Completed
+          </FilterLink>
         </p>
       </div>
     );
