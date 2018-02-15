@@ -55,6 +55,27 @@ const TodoList = ({ todos, onClickTodo }) => (
   </ul>
 );
 
+const AddTodo = ({ onAddClick }) => {
+  let input = "";
+  return (
+    <div>
+      <input
+        ref={node => {
+          input = node;
+        }}
+      />
+      <button
+        onClick={() => {
+          onAddClick(input.value);
+          input.value = "";
+        }}
+      >
+        Add Todo
+      </button>
+    </div>
+  );
+};
+
 class TodoApp extends React.Component {
   getVisibleTodos = (todos, filter) => {
     console.log("get visible", filter);
@@ -73,24 +94,15 @@ class TodoApp extends React.Component {
     const { filter, todos } = this.props;
     return (
       <div>
-        <input
-          ref={node => {
-            this.input = node;
+        <AddTodo
+          onAddClick={text => {
+            store.dispatch({
+              type: "ADD_TODO",
+              id: nextTodoId++,
+              text: text
+            });
           }}
         />
-        <button
-          onClick={() => {
-            let newTodo = {
-              type: "ADD_TODO",
-              text: this.input.value,
-              id: nextTodoId++
-            };
-            store.dispatch(newTodo);
-            this.input.value = "";
-          }}
-        >
-          Add Todo
-        </button>
         <TodoList
           todos={this.getVisibleTodos(todos, filter)}
           onClickTodo={id => {
