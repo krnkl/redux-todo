@@ -36,25 +36,26 @@ const FilterLink = ({ children, currentFilter, filter }) => {
   );
 };
 
-class TodoApp extends React.Component {
-  listTodos = allTodos =>
-    allTodos.map(todo => (
-      <li
-        onClick={() => {
-          store.dispatch({
-            type: "TOGGLE_TODO",
-            id: todo.id
-          });
-        }}
-        key={todo.id}
-        style={{
-          textDecoration: todo.completed ? "line-through" : "none"
-        }}
-      >
-        {todo.text}
-      </li>
-    ));
+const Todo = ({ text, completed, onClickTodo }) => (
+  <li
+    onClick={onClickTodo}
+    style={{
+      textDecoration: completed ? "line-through" : "none"
+    }}
+  >
+    {text}
+  </li>
+);
 
+const TodoList = ({ todos, onClickTodo }) => (
+  <ul>
+    {todos.map(todo => (
+      <Todo key={todo.id} {...todo} onClickTodo={() => onClickTodo(todo.id)} />
+    ))}
+  </ul>
+);
+
+class TodoApp extends React.Component {
   getVisibleTodos = (todos, filter) => {
     console.log("get visible", filter);
     switch (filter) {
@@ -69,6 +70,7 @@ class TodoApp extends React.Component {
     }
   };
   render() {
+    const { filter, todos } = this.props;
     return (
       <div>
         <input
@@ -89,20 +91,24 @@ class TodoApp extends React.Component {
         >
           Add Todo
         </button>
-        <ul>
-          {this.listTodos(
-            this.getVisibleTodos(this.props.todos, this.props.filter)
-          )}
-        </ul>
+        <TodoList
+          todos={this.getVisibleTodos(todos, filter)}
+          onClickTodo={id => {
+            store.dispatch({
+              type: "TOGGLE_TODO",
+              id: id
+            });
+          }}
+        />
         <p>
           Show:{" "}
-          <FilterLink currentFilter={this.props.filter} filter="SHOW_ALL">
+          <FilterLink currentFilter={filter} filter="SHOW_ALL">
             All
           </FilterLink>{" "}
-          <FilterLink currentFilter={this.props.filter} filter="ACTIVE">
+          <FilterLink currentFilter={filter} filter="ACTIVE">
             Active
           </FilterLink>{" "}
-          <FilterLink currentFilter={this.props.filter} filter="COMPLETED">
+          <FilterLink currentFilter={filter} filter="COMPLETED">
             Completed
           </FilterLink>
         </p>
