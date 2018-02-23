@@ -15,7 +15,25 @@ const todoApp = combineReducers({
 });
 
 let nextTodoId = 0;
-
+const addTodo = value => {
+  return {
+    type: "ADD_TODO",
+    id: nextTodoId++,
+    text: value
+  };
+};
+const setVisibilityFilter = filter => {
+  return {
+    type: "SET_VISIBILITY_FILTER",
+    filter
+  };
+};
+const toggleTodo = id => {
+  return {
+    type: "TOGGLE_TODO",
+    id
+  };
+};
 const Todo = ({ text, completed, onClickTodo }) => (
   <li
     onClick={onClickTodo}
@@ -46,11 +64,7 @@ const AddTodo = (props, { store }) => {
       />
       <button
         onClick={() => {
-          store.dispatch({
-            type: "ADD_TODO",
-            id: nextTodoId++,
-            text: input.value
-          });
+          store.dispatch(addTodo(input.value));
           input.value = "";
           input.focus();
         }}
@@ -98,10 +112,7 @@ class FilterLink extends React.Component {
       <Link
         active={state.visibilityFilter === filter}
         onLinkClick={() => {
-          store.dispatch({
-            type: "SET_VISIBILITY_FILTER",
-            filter
-          });
+          store.dispatch(setVisibilityFilter(filter));
         }}
       >
         {children}
@@ -135,10 +146,7 @@ class VisisbleTodoList extends React.Component {
       <TodoList
         todos={getVisibleTodos(todos, visibilityFilter)}
         onClickTodo={id => {
-          store.dispatch({
-            type: "TOGGLE_TODO",
-            id: id
-          });
+          store.dispatch(toggleTodo(id));
         }}
       />
     );
