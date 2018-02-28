@@ -3,7 +3,10 @@ import { Provider } from "react-redux";
 import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import { createStore, combineReducers } from "redux";
-import { todos, visibilityFilter } from "./todo";
+import { todos, visibilityFilter } from "./reducers";
+import { v4 } from "node-uuid";
+import throttle from "lodash/throttle";
+import { loadState, saveState } from "./localStorage";
 
 const styles = {
   fontFamily: "sans-serif",
@@ -14,10 +17,9 @@ const todoApp = combineReducers({
   visibilityFilter
 });
 
-let nextTodoId = 0;
 const addTodo = value => ({
   type: "ADD_TODO",
-  id: nextTodoId++,
+  id: v4(),
   text: value
 });
 const setVisibilityFilter = filter => ({
@@ -171,8 +173,17 @@ const TodoApp = ({ store }) => (
   </div>
 );
 
+const store = createStore(todoApp, loadState());
+
+store.subscribe(
+  throttle(() => {
+    saveState({
+      todos: store.getState().todos
+    });
+  }, 1000)
+);
 ReactDOM.render(
-  <Provider store={createStore(todoApp)}>
+  <Provider store={store}>
     <TodoApp />
   </Provider>,
   document.getElementById("root")
