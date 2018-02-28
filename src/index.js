@@ -15,25 +15,19 @@ const todoApp = combineReducers({
 });
 
 let nextTodoId = 0;
-const addTodo = value => {
-  return {
-    type: "ADD_TODO",
-    id: nextTodoId++,
-    text: value
-  };
-};
-const setVisibilityFilter = filter => {
-  return {
-    type: "SET_VISIBILITY_FILTER",
-    filter
-  };
-};
-const toggleTodo = id => {
-  return {
-    type: "TOGGLE_TODO",
-    id
-  };
-};
+const addTodo = value => ({
+  type: "ADD_TODO",
+  id: nextTodoId++,
+  text: value
+});
+const setVisibilityFilter = filter => ({
+  type: "SET_VISIBILITY_FILTER",
+  filter
+});
+const toggleTodo = id => ({
+  type: "TOGGLE_TODO",
+  id
+});
 const Todo = ({ text, completed, onClickTodo }) => (
   <li
     onClick={onClickTodo}
